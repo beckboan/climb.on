@@ -1,25 +1,27 @@
 import { MikroORM } from "@mikro-orm/postgresql";
-import { __prod__ } from "./constants";
+import mikroOrmConfig from "./mikro-orm.config";
 import { Post } from "./entities/Post";
 
 const main = async () => {
-  const orm = MikroORM.init({
-    dbName: "climbon",
-    debug: !__prod__,
-    entities: [Post],
-    // user: "",
-    // password: "",
-  });
-  console.log("Hello ye");
-  console.log("YES");
+  try {
+    // Initialize ORM and run migrations
+    const orm = await MikroORM.init(mikroOrmConfig);
+    await orm.getMigrator().up();
 
-  const post = (await orm).em.create(Post, {
-    title: "my first post",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+    // Fork the EntityManager for specific operations
+    const em = orm.em.fork();
 
-  (await orm).em.persistAndFlush(post);
+    // Create a new Post entity
+    const post = em.create(Post, {
+      title: "my first post",
+    });
+
+    await em.persistAndFlush(post);
+
+    console.log(post);
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 main();

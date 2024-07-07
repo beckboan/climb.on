@@ -23,6 +23,7 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
     "mikro-orm": "^6.2.9"
   },
   "mikro-orm": {

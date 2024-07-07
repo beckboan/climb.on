@@ -1,16 +1,18 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, PrimaryKey, Property, OptionalProps } from "@mikro-orm/core";
 
 @Entity()
 export class Post {
+  [OptionalProps]?: "createdAt" | "updatedAt";
+
   @PrimaryKey()
   id!: number;
 
-  @Property()
+  @Property({ type: "string" })
   title!: string;
 
-  @Property()
-  createdAt: Date;
+  @Property({ type: "date", defaultRaw: "now()" })
+  createdAt = new Date();
 
-  @Property({ onUpdate: () => new Date() })
-  updatedAt: Date;
+  @Property({ type: "date", onUpdate: () => new Date(), defaultRaw: "now()" })
+  updatedAt = new Date();
 }
