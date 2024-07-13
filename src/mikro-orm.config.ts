@@ -3,6 +3,7 @@ import { Post } from "./entities/Post";
 import { defineConfig } from "@mikro-orm/postgresql";
 import { Migrator } from "@mikro-orm/migrations";
 import path from "path";
+import { User } from "./entities/User";
 require("dotenv").config();
 
 export default defineConfig({
@@ -14,7 +15,7 @@ export default defineConfig({
     disableForeignKeys: false,
   },
   debug: __prod__,
-  entities: [Post],
+  entities: [Post, User],
   dbName: process.env.DATABASE_NAME,
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,

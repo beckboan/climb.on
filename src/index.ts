@@ -8,6 +8,7 @@ import { HelloResolver } from "./resolvers/hello";
 import cors from "cors";
 import { expressMiddleware } from "@apollo/server/express4";
 import { PostResolver } from "./resolvers/post";
+import { UserResolver } from "./resolvers/user";
 
 const main = async () => {
   try {
@@ -23,7 +24,7 @@ const main = async () => {
 
     const server = new ApolloServer({
       schema: await buildSchema({
-        resolvers: [HelloResolver, PostResolver],
+        resolvers: [HelloResolver, PostResolver, UserResolver],
         validate: false,
       }),
     });
