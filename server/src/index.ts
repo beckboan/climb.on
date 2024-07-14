@@ -16,7 +16,7 @@ import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 
-import session, { Store } from "express-session";
+import session from "express-session";
 import { createClient } from "redis";
 import RedisStore from "connect-redis";
 
@@ -73,7 +73,11 @@ const main = async () => {
 
     app.use(
       "/",
-      cors<cors.CorsRequest>(),
+      cors<cors.CorsRequest>({
+        origin: "http://localhost:3000",
+        optionsSuccessStatus: 200,
+        credentials: true,
+      }),
       express.json(),
       expressMiddleware(server, {
         context: async ({ req, res }): Promise<MyContext> => ({ em, req, res }),
