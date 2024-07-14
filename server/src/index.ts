@@ -1,14 +1,24 @@
 import "reflect-metadata";
+import { __prod__ } from "./constants";
+import { MyContext } from "./types";
+
 import { MikroORM } from "@mikro-orm/postgresql";
 import mikroOrmConfig from "./mikro-orm.config";
+
 import express from "express";
-import { ApolloServer } from "@apollo/server";
-import { buildSchema } from "type-graphql";
-import { HelloResolver } from "./resolvers/hello";
 import cors from "cors";
+
+import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
+import { buildSchema } from "type-graphql";
+
+import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
+
+import session, { Store } from "express-session";
+import { createClient } from "redis";
+import RedisStore from "connect-redis";
 
 const main = async () => {
   try {
@@ -22,6 +32,36 @@ const main = async () => {
     // -- SERVER SETUP -- //
     const app = express();
 
+    // --REDIS SETUP-- //
+    // Initialize client.
+    let redisClient = createClient();
+    redisClient.connect().catch(console.error);
+
+    // Initialize store.
+    const redisStore = new RedisStore({
+      client: redisClient,
+      prefix: "myapp:",
+      disableTouch: true,
+    });
+
+    // Initialize session storage.
+    app.use(
+      session({
+        name: "qid",
+        store: redisStore,
+        resave: false, // required: force lightweight session keep alive (touch)
+        saveUninitialized: false, // recommended: only save session when data exists
+        secret: "qpwrakldjlkawejrpajwdpaiwdj",
+        cookie: {
+          maxAge: 1000 * 60 * 60 * 24 * 365 * 10, //10 years
+          httpOnly: true,
+          sameSite: "lax",
+          secure: __prod__, // Cookies only works in https
+        },
+      })
+    );
+
+    // --APOLLO SETUP-- //
     const server = new ApolloServer({
       schema: await buildSchema({
         resolvers: [HelloResolver, PostResolver, UserResolver],
@@ -36,7 +76,7 @@ const main = async () => {
       cors<cors.CorsRequest>(),
       express.json(),
       expressMiddleware(server, {
-        context: async () => ({ em }),
+        context: async ({ req, res }): Promise<MyContext> => ({ em, req, res }),
       })
     );
 
