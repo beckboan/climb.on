@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { __prod__ } from "./constants";
+import { __prod__, COOKIE_NAME } from "./constants";
 import { MyContext } from "./types";
 
 import { MikroORM } from "@mikro-orm/postgresql";
@@ -47,7 +47,7 @@ const main = async () => {
     // Initialize session storage.
     app.use(
       session({
-        name: "qid",
+        name: COOKIE_NAME,
         store: redisStore,
         resave: false, // required: force lightweight session keep alive (touch)
         saveUninitialized: false, // recommended: only save session when data exists
