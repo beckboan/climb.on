@@ -28,6 +28,7 @@ export type Mutation = {
   createPost: Post;
   deletePost: Scalars['Boolean']['output'];
   login: UserResponse;
+  logout: Scalars['Boolean']['output'];
   register: UserResponse;
   updatePost?: Maybe<Post>;
 };
@@ -98,30 +99,89 @@ export type UsernamePasswordInput = {
   username: Scalars['String']['input'];
 };
 
+export type StandardUserFragment = { __typename?: 'User', id: number, username: string };
+
+export type LoginMutationVariables = Exact<{
+  input: UsernamePasswordInput;
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: number, username: string } | null } };
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
 export type RegisterMutationVariables = Exact<{
-  username: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+  input: UsernamePasswordInput;
 }>;
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null, user?: { __typename?: 'User', id: number, username: string } | null } };
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
-export const RegisterDocument = gql`
-    mutation Register($username: String!, $password: String!) {
-  register(input: {username: $username, password: $password}) {
+
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string } | null };
+
+export const StandardUserFragmentDoc = gql`
+    fragment StandardUser on User {
+  id
+  username
+}
+    `;
+export const LoginDocument = gql`
+    mutation Login($input: UsernamePasswordInput!) {
+  login(input: $input) {
     errors {
       field
       message
     }
     user {
-      id
-      username
+      ...StandardUser
     }
   }
 }
+    ${StandardUserFragmentDoc}`;
+
+export function useLoginMutation() {
+  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
     `;
+
+export function useLogoutMutation() {
+  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
+};
+export const RegisterDocument = gql`
+    mutation Register($input: UsernamePasswordInput!) {
+  register(input: $input) {
+    errors {
+      field
+      message
+    }
+    user {
+      ...StandardUser
+    }
+  }
+}
+    ${StandardUserFragmentDoc}`;
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const MeDocument = gql`
+    query Me {
+  me {
+    ...StandardUser
+  }
+}
+    ${StandardUserFragmentDoc}`;
+
+export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
+  return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
 };
