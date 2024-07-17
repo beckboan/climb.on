@@ -8,7 +8,6 @@ import {
 } from "../generated/graphql";
 import { cacheExchange } from "@urql/exchange-graphcache";
 import { typedQuery } from "./typedQuery";
-import { registerUrql } from "@urql/next/rsc";
 import { createClient } from "urql";
 import { useMemo } from "react";
 

@@ -4,6 +4,7 @@ import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import React from "react";
 import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../../generated/graphql";
+import { UrqlClientProvider } from "./UrqlClientProvider";
 
 interface NavBarProps {}
 
@@ -47,9 +48,12 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   }
 
   return (
-    <Flex bg="tomato" p={4}>
-      <Box ml={"auto"}>{body}</Box>
-    </Flex>
+    <UrqlClientProvider>
+      {" "}
+      <Flex bg="tomato" p={4}>
+        <Box ml={"auto"}>{body}</Box>
+      </Flex>
+    </UrqlClientProvider>
   );
 };
 
