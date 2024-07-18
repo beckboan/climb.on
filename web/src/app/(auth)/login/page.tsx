@@ -8,12 +8,21 @@ import InputField from "../../components/InputField";
 import Wrapper from "../../components/Wrapper";
 import { useLoginMutation } from "../../../generated/graphql";
 import { mapErrors } from "../../../utils/mapErrors";
+import { useMutation, useQuery } from "@urql/next";
+import {
+  LoginDocument,
+  LoginMutation,
+  LoginMutationVariables,
+} from "@/generated/server";
 
 interface loginProps {}
 
 const Login: React.FC<loginProps> = ({}) => {
   const router = useRouter();
-  const [{}, login] = useLoginMutation();
+  // const [{}, login] = useLoginMutation();
+  const [{}, login] = useMutation<LoginMutation, LoginMutationVariables>(
+    LoginDocument
+  );
 
   const handleLogin = async (
     values: { username: string; password: string },

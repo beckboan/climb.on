@@ -8,12 +8,24 @@ import InputField from "../../components/InputField";
 import Wrapper from "../../components/Wrapper";
 import { useRegisterMutation } from "../../../generated/graphql";
 import { mapErrors } from "../../../utils/mapErrors";
+import { useMutation, useQuery } from "@urql/next";
+import {
+  RegisterDocument,
+  RegisterMutation,
+  RegisterMutationVariables,
+} from "@/generated/server";
 
 interface registerProps {}
 
 const Register: React.FC<registerProps> = ({}) => {
   const router = useRouter();
-  const [{}, register] = useRegisterMutation();
+
+  const [{}, register] = useMutation<
+    RegisterMutation,
+    RegisterMutationVariables
+  >(RegisterDocument);
+
+  // const [{}, register] = useRegisterMutation();
 
   const handleRegister = async (
     values: { username: string; password: string },

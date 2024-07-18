@@ -6,11 +6,21 @@ import NextLink from "next/link";
 import { useLogoutMutation, useMeQuery } from "../../../generated/graphql";
 import { Provider } from "urql";
 import { urqlClient } from "@/utils/urql/urqlClient";
+import { useMutation } from "@urql/next";
+import {
+  LogoutDocument,
+  LogoutMutation,
+  LogoutMutationVariables,
+} from "@/generated/server";
 
 interface NavBarProps {}
 
 const NavBarContent: React.FC<NavBarProps> = ({}) => {
-  const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
+  // const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
+  const [{ fetching: logoutFetching }, logout] = useMutation<
+    LogoutMutation,
+    LogoutMutationVariables
+  >(LogoutDocument);
   const [{ data, fetching }] = useMeQuery();
 
   let body = null;
