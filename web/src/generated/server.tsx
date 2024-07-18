@@ -1,5 +1,4 @@
 import gql from 'graphql-tag';
-import * as Urql from 'urql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -125,6 +124,11 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string } | null };
 
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: number, createdAt: string, updatedAt: string, title: string }> };
+
 export const StandardUserFragmentDoc = gql`
     fragment StandardUser on User {
   id
@@ -144,19 +148,11 @@ export const LoginDocument = gql`
   }
 }
     ${StandardUserFragmentDoc}`;
-
-export function useLoginMutation() {
-  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
-};
 export const LogoutDocument = gql`
     mutation Logout {
   logout
 }
     `;
-
-export function useLogoutMutation() {
-  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
-};
 export const RegisterDocument = gql`
     mutation Register($input: UsernamePasswordInput!) {
   register(input: $input) {
@@ -170,10 +166,6 @@ export const RegisterDocument = gql`
   }
 }
     ${StandardUserFragmentDoc}`;
-
-export function useRegisterMutation() {
-  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
-};
 export const MeDocument = gql`
     query Me {
   me {
@@ -181,7 +173,13 @@ export const MeDocument = gql`
   }
 }
     ${StandardUserFragmentDoc}`;
-
-export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
-  return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
-};
+export const PostsDocument = gql`
+    query Posts {
+  posts {
+    id
+    createdAt
+    updatedAt
+    title
+  }
+}
+    `;

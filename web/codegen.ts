@@ -9,6 +9,13 @@ const config: CodegenConfig = {
       // preset: "client",
       plugins: ["typescript", "typescript-operations", "typescript-urql"],
     },
+    "src/generated/server.tsx": {
+      plugins: ["typescript", "typescript-operations", "typescript-urql"],
+      config: {
+        withHooks: false,
+        wthComponent: false,
+      },
+    },
   },
 };
 
